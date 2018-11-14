@@ -4,13 +4,150 @@
 <head>
 </head>
 <body>
-
   
 	<!-- development version, includes helpful console warnings -->
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
+  <div id="example-1">
+    <button v-on:click="counter += 1">Add 1</button>
+    <p>The button above has been clicked {{ counter }} times.</p>
+  </div>
+
   <script type="text/javascript">
-    
+    var example1 = new Vue({
+      el: '#example-1',
+      data: {
+        counter: 0
+      }
+    })
   </script>
+
+
+  <div id="example-2">
+    <!-- `greet` is the name of a method defined below -->
+    <button v-on:click="greet">Greet</button>
+  </div>
+
+  <script type="text/javascript">
+    // Method Event Handlers
+    var example2 = new Vue({
+      el: '#example-2',
+      data: {
+        name: 'Vue.js'
+      },
+      // define methods under the `methods` object
+      methods: {
+        greet: function (event) {
+          // `this` inside methods points to the Vue instance
+          alert('Hello ' + this.name + '!')
+          // `event` is the native DOM event
+          if (event) {
+            alert(event.target.tagName)
+          }
+        }
+      }
+    })
+
+    // you can invoke methods in JavaScript too
+    // example2.greet() // => 'Hello Vue.js!'
+  </script>
+
+  <br><br>
+  <div id="example-3">
+    <button v-on:click="say('hi')">Say hi</button>
+    <button v-on:click="say('what')">Say what</button>
+    <br>
+
+    <!-- Sometimes we also need to access the original DOM event in an inline statement handler -->
+    <button v-on:click="warn('Form cannot be submitted yet.', $event)">
+      Submit
+    </button>
+  </div>
+
+  <script type="text/javascript">
+    // Methods in Inline Handlers
+    new Vue({
+      el: '#example-3',
+      methods: {
+        say: function (message) {
+          alert(message);
+        },
+        warn: function (message, event) {
+          // now we have access to the native event (via passing '$event' in the HTML)
+          if (event) event.preventDefault();
+          alert(message);
+        },
+      }
+    })
+  </script>
+  
+
+  <div id="event-modifiers">
+    <!-- the click event's propagation will be stopped -->
+    <a v-on:click.stop="doThis"></a>
+
+    <!-- the submit event will no longer reload the page -->
+    <form v-on:submit.prevent="onSubmit"></form>
+
+    <!-- modifiers can be chained -->
+    <a v-on:click.stop.prevent="doThat"></a>
+
+    <!-- just the modifier -->
+    <form v-on:submit.prevent></form>
+
+    <!-- use capture mode when adding the event listener -->
+    <!-- i.e. an event targeting an inner element is handled here before being handled by that element -->
+    <div v-on:click.capture="doThis">...</div>
+
+    <!-- only trigger handler if event.target is the element itself -->
+    <!-- i.e. not from a child element -->
+    <div v-on:click.self="doThat">...</div>
+
+    <!-- the click event will be triggered at most once -->
+    <a v-on:click.once="doThis"></a>
+    <!-- NOTE: .once can only be used on component events -->
+
+    <!-- the scroll event's default behavior (scrolling) will happen -->
+    <!-- immediately, instead of waiting for `onScroll` to complete  -->
+    <!-- in case it contains `event.preventDefault()`                -->
+    <div v-on:scroll.passive="onScroll">...</div>
+    <!-- WARNING: don't use .passive and .prevent together -->
+  </div>
+
+  <script type="text/javascript">
+    new Vue({
+      el:'#event-modifiers',
+      methods: {
+        doThis: function () {
+          console.log('do this');
+        },
+        doThat: function () {
+          console.log('do that');
+        },
+        onSubmit: function () {
+          console.log('on submit');
+        },
+        onScroll: function () {
+          console.log('on scroll');
+        },
+      }
+    });
+    // Event Modifiers:
+    // .stop
+    // .prevent
+    // .capture
+    // .self
+    // .once
+    // .passive
+  </script>
+
+
+
+  <script type="text/javascript"></script>
+
+
+
+  <script type="text/javascript"></script>
+
 </body>
 </html>
