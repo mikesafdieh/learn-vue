@@ -112,6 +112,40 @@
     <!-- in case it contains `event.preventDefault()`                -->
     <div v-on:scroll.passive="onScroll">...</div>
     <!-- WARNING: don't use .passive and .prevent together -->
+
+    <!-- Key Modifiers -->
+    <br>
+    <h3>Key Modifiers</h3>
+
+    <!-- only call `vm.submit()` when the `keyCode` is 13 (ENTER key) -->
+    <input v-on:keyup.13="submit">
+    <!-- same as above (using modifier alias for ENTER key) -->
+    <input v-on:keyup.enter="submit">
+    <!-- also works for shorthand -->
+    <input @keyup.enter="submit">
+
+    <!-- You can also directly use any valid key names exposed via `KeyboardEvent.key` as modifiers by converting them to kebab-case: -->
+    <input @keyup.page-down="onPageDown">
+    <!-- i.e. here $event.key === 'PageDown' -->
+
+    <!-- System Modifier Keys -->
+    <br>
+    <h3>System Modifier Keys</h3>
+    <!-- Alt + C -->
+    <input @keyup.alt.67="clear">
+
+    <!-- Ctrl + Click -->
+    <div @click.ctrl="doSomething">Do something</div>
+
+    <br>
+    <span>this will fire even if Alt or any other key is also pressed</span>
+    <button @click.shift="onClick">A</button>
+    <br>
+    <span>this will only fire when Shift and no other keys are pressed</span>
+    <button @click.shift.exact="onShiftClick">A</button>
+    <br>
+    <span>this will only fire when no system modifiers are pressed</span>
+    <button @click.exact="onClickOnly">A</button>
   </div>
 
   <script type="text/javascript">
@@ -130,6 +164,27 @@
         onScroll: function () {
           console.log('on scroll');
         },
+        submit: function () {
+          console.log('submit');
+        },
+        onPageDown: function () {
+          console.log('on page down');
+        },
+        clear: function () {
+          console.log('clear');
+        },
+        doSomething: function () {
+          console.log('do something');
+        },
+        onClick: function () {
+          console.log('on click');
+        },
+        onShiftClick: function () {
+          console.log('on shift only click');
+        },
+        onClickOnly: function () {
+          console.log('on click only');
+        },
       }
     });
     // Event Modifiers:
@@ -139,15 +194,39 @@
     // .self
     // .once
     // .passive
+
+    // Key modifier aliases:
+    // .enter
+    // .tab
+    // .delete (captures both “Delete” and “Backspace” keys)
+    // .esc
+    // .space
+    // .up
+    // .down
+    // .left
+    // .right
+
+    // Defining custom key modifier aliases
+    // enable `v-on:keyup.f1`
+    Vue.config.keyCodes.f1 = 112
+
+    // System modifier keys
+    // .ctrl
+    // .alt
+    // .shift
+    // .meta
+
+    // .meta refers to command key on mac
+
+    // NOTE: (system) modifier keys are different from regular keys and when used with `keyup` events, they have to be pressed when the event is emitted. In other words, `keyup.ctrl` will only trigger if you release a key while holding down `ctrl`. It won’t trigger if you release the `ctrl` key alone. If you do want such behaviour, use the `keyCode` for `ctrl` instead: `keyup.17`.
+
+    // NOTE: @click.ctrl does not seem to work on mac. The right click menu that pops up seems to not trigger the event somehow
+
+    // Mouse Button Modifiers
+    // .left
+    // .right
+    // .middle
   </script>
-
-
-
-  <script type="text/javascript"></script>
-
-
-
-  <script type="text/javascript"></script>
 
 </body>
 </html>
