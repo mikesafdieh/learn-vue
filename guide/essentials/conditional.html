@@ -1,0 +1,88 @@
+<!-- Essentials 6 - Conditional Rendering -->
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+  <div id="app">
+    <template v-if="loginType === 'username'">
+      <label>Username</label>
+      <input placeholder="Enter your username" key="username-input">
+    </template>
+    <template v-else>
+      <label>Email</label>
+      <input placeholder="Enter your email address" key="email-input">
+    </template>
+
+    <br>
+    <button @click="toggleLoginType()">Toggle login type</button>
+  </div>
+
+	<!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <script type="text/javascript">
+
+    // <h1 v-if="ok">Yes</h1>
+    
+    // <h1 v-if="ok">Yes</h1>
+    // <h1 v-else>No</h1>
+
+
+    // Toggle more than one element:
+    // <template v-if="ok">
+    //   <h1>Title</h1>
+    //   <p>Paragraph 1</p>
+    //   <p>Paragraph 2</p>
+    // </template>
+
+
+    // <div v-if="type === 'A'">
+    //   A
+    // </div>
+    // <div v-else-if="type === 'B'">
+    //   B
+    // </div>
+    // <div v-else-if="type === 'C'">
+    //   C
+    // </div>
+    // <div v-else>
+    //   Not A/B/C
+    // </div>
+
+    // Using the key attribute in the html assures that Vue won't reuse elements
+    // Read more about this here: 
+    // https://vuejs.org/v2/guide/conditional.html#Controlling-Reusable-Elements-with-key
+    var app = new Vue({
+      el: '#app',
+      data: {
+        loginType: 'username',
+      },
+      methods: {
+        toggleLoginType: function () {
+          if (this.loginType === 'username') {
+            this.loginType = 'email';
+          }
+          else {
+            this.loginType = 'username';
+          }
+        },
+      }
+    });
+
+    // <h1 v-show="ok">Hello!</h1>
+
+    // The difference is that an element with v-show will always be rendered and remain in 
+    // the DOM; v-show only toggles the display CSS property of the element.
+    
+    // NOTE: v-show doesn’t support the <template> element, nor does it work with v-else
+
+    // Read more here:
+    // https://vuejs.org/v2/guide/conditional.html#v-if-vs-v-show
+
+    // IMPORTANT: don't use v-if and v-for in the same element
+
+  </script>
+</body>
+</html>

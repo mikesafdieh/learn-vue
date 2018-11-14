@@ -1,0 +1,243 @@
+<!-- Essentials 7 - List Rendering -->
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+  <ul id="example-1">
+    <li v-for="item in items">
+      {{ item.message }}
+    </li>
+  </ul>
+
+  <br>
+
+  <ul id="example-2">
+    <li v-for="(item, index) in items">
+      {{ parentMessage }} - {{ index }} - {{ item.message }}
+    </li>
+  </ul>
+
+  <br>
+
+  <ul id="v-for-object" class="demo">
+    <li v-for="value in object">
+      {{ value }}
+    </li>
+    <br>
+    <div v-for="(value, key) in object">
+      {{ key }}: {{ value }}
+    </div>
+    <br>
+    <div v-for="(value, key, index) in object">
+      {{ index }}. {{ key }}: {{ value }}
+    </div>
+  </ul>
+
+  <br>
+
+  <ul id="example-3">
+    <li v-for="item in items">
+      {{ item }}
+    </li>
+  </ul>
+
+  <ul id="example-4">
+  </ul>
+
+	<!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <script type="text/javascript">
+    var example1 = new Vue({
+      el: '#example-1',
+      data: {
+        items: [
+          { message: 'Foo' },
+          { message: 'Bar' }
+        ]
+      }
+    });
+
+    var example2 = new Vue({
+      el: '#example-2',
+      data: {
+        parentMessage: 'Parent',
+        items: [
+          { message: 'Foo' },
+          { message: 'Bar' }
+        ]
+      }
+    });
+
+    // NOTE: You can also use 'of' as the delimiter instead of 'in', so that it is closer to JavaScript’s syntax for iterators:
+    // <div v-for="item of items"></div>
+
+
+    var objExample = new Vue({
+      el: '#v-for-object',
+      data: {
+        object: {
+          firstName: 'John',
+          lastName: 'Doe',
+          age: 30
+        }
+      }
+    });
+
+    // I don't fully get the whole 'key' thing:
+    // <div v-for="item in items" :key="item.id">
+    //   <!-- content -->
+    // </div>
+    // It is recommended to provide a key with v-for whenever possible, unless the iterated DOM content is simple, or you are intentionally relying on the default behavior for performance gains.
+    // Read more here:
+    // https://vuejs.org/v2/guide/list.html#key
+
+    // Vue wraps an observed array’s mutation methods so they will also trigger view updates. The wrapped methods are:
+      // push()
+      // pop()
+      // shift()
+      // unshift()
+      // splice()
+      // sort()
+      // reverse()
+
+    // exs of non-mutating methods:
+      // filter()
+      // slice()
+      // concat()
+
+    // ex usage of non-mutation method:
+    // example1.items = example1.items.filter(function (item) {
+    //   return item.message.match(/Foo/)
+    // })
+
+    // CAVEATS:
+    var example3 = new Vue({
+      el: '#example-3',
+      data: {
+        items: ['a', 'b', 'c']
+      }
+    })
+    // caveat 1:
+    example3.items[1] = 'x' // is NOT reactive
+    // caveat 2:
+    example3.items.length = 2 // is NOT reactive
+
+    // Work arounds for 1st caveat:
+    // Vue.set(example3.items, indexOfItem, newValue) // using Vue.set
+    // example3.items.splice(indexOfItem, 1, newValue) // using Array.prototype.splice
+    // example3.$set(example3.items, indexOfItem, newValue) // example3.$set is alias for Vue.set
+
+    // Work around for 2nd caveat:
+    // example3.items.splice(newLength)
+
+
+    var vm = new Vue({
+      el: 'example-4',
+      data: {
+        a: 1,
+        userProfile: {
+          name: 'Anika'
+        },
+      },
+    })
+    // `vm.a` is now reactive
+
+    vm.b = 2
+    // `vm.b` is NOT reactive
+
+    // It iss possible to add reactive properties to a nested object using the Vue.set(object, key, value) method:
+    Vue.set(vm.userProfile, 'age', 27);
+    vm.$set(vm.userProfile, 'age', 27); // does the same
+
+    // assigning multilpe properties at once:
+    vm.userProfile = Object.assign({}, vm.userProfile, {
+      age: 27,
+      favoriteColor: 'Vue Green'
+    })
+
+  </script>
+
+  <!-- Displaying Filtered/Sorted Results -->
+
+  <div id="ex5">
+    <li v-for="n in evenNumbers">{{ n }}</li>
+  </div>
+
+  <script type="text/javascript">
+    new Vue({
+      el: '#ex5',
+      data: {
+        numbers: [ 1, 2, 3, 4, 5 ]
+      },
+      computed: {
+        evenNumbers: function () {
+          return this.numbers.filter(function (number) {
+            return number % 2 === 0
+          })
+        }
+      }
+    })
+  </script>
+
+  <br>
+  <div id="ex6">
+    <li v-for="n in even(numbers)">{{ n }}</li>
+  </div>
+
+  <script type="text/javascript">
+    // In situations where computed properties are not feasible (e.g. inside nested v-for loops), you can use a method:
+    new Vue({
+      el: '#ex6',
+      data: {
+        numbers: [ 1, 2, 3, 4, 5 ]
+      },
+      methods: {
+        even: function (numbers) {
+          return numbers.filter(function (number) {
+            return number % 2 === 0
+          })
+        }
+      }
+    })
+  </script>
+
+  <br><br>
+
+  <div id="more">
+    <span v-for="n in 10">{{ n }} </span>
+    <ul>
+      <template v-for="item in items">
+        <li>{{ item.message }}</li>
+        <li class="divider" role="presentation"></li>
+      </template>
+    </ul>
+    <br>
+    <li v-for="todo in todos" v-if="!todo.isComplete">
+      {{ todo.message }}
+    </li>
+  </div>
+
+  <script type="text/javascript">
+    new Vue({
+      el:'#more',
+      data: {
+        items: [
+          { message: 'Foo' },
+          { message: 'Bar' }
+        ],
+        todos: [
+          { message: 'one', isComplete: false },
+          { message: 'two', isComplete: true },
+          { message: 'three', isComplete: false },
+        ],
+      }
+    });
+    // use v-for on <template> tag to render a block of multiple elements
+
+  </script>
+
+</body>
+</html>

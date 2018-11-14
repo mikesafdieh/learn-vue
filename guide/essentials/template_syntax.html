@@ -1,0 +1,54 @@
+<!-- Essentials 3 - Template Syntax -->
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+	<div id="app">
+	    <span>Message: {{ msg }}</span>
+	    <br>
+	    <span v-once>This will never change: {{ msg }}</span>
+
+	    <br><br><br>
+
+	    <p>Using mustaches: {{ rawHtml }}</p>
+		<p>Using v-html directive: <span v-html="rawHtml"></span></p>
+
+		<br><br><br>
+
+		{{ number + 1 }}<br>
+		{{ ok ? 'YES' : 'NO' }}<br>
+		{{ message.split('').reverse().join('') }}<br>
+		<div v-bind:id="'list-' + id"></div>
+
+	</div>
+	<script type="text/javascript">
+		// v-once directive will only cause data 
+
+		var app = new Vue({
+	      el: '#app',
+	      data: {
+	        msg: 'This is a message',
+	        rawHtml: '<span style="color: red"> This should be red.</span>',
+	        number: 11,
+	        ok: true,
+	        message: 'I am Lester',
+	        id: 'a12',
+	      }
+	    });
+
+		// Expressions that won't work in the HTML:
+		// 1. this is a statement, not an expression:
+		// {{ var a = 1 }}
+		// 2. flow control won't work either, use ternary expressions:
+		// {{ if (ok) { return message } }}
+
+		// NOTE:
+		// Template expressions are sandboxed and only have access to a whitelist of globals 
+		// such as Math and Date. You should not attempt to access user defined globals
+		// in template expressions.
+
+	</script>
+</body>

@@ -1,0 +1,108 @@
+<!-- Essentials 5 - Class and Style Bindings -->
+<!DOCTYPE html>
+<html>
+<head>
+	<style type="text/css">
+		.active {
+			color: blue;
+		}
+		.text-danger {
+			color: red;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="app">
+		<p v-bind:class="classObject">object syntax using computed property</p>
+	</div>
+
+	<!-- development version, includes helpful console warnings -->
+  	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  	<script type="text/javascript">
+
+  		/******************************/
+  		/**** Binding HTML Classes ****/
+  		/******************************/
+
+  		// OBJECT SYNTAX
+
+  		// <div v-bind:class="{ active: isActive }"></div>
+  		// this will add the class 'active' based on the truthiness of isActive
+
+
+  		// Can use regular class attribute with v-bind:class
+  		// <div class="static" v-bind:class="{ active: isActive, 'text-danger': hasError }"></div>
+
+  		// Can use the instance data prop for class bindings as well:
+  		// <div v-bind:class="classObject"></div>
+  		// data: {
+		//   classObject: {
+		//     active: true,
+		//     'text-danger': false
+		//   }
+		// }
+
+		// using computed prop:
+  		var app = new Vue({
+  			el: '#app',
+  			data: {
+  				isActive: true,
+  				error: null,
+  			},
+  			computed: {
+  				classObject: function () {
+  					return {
+  						active: this.isActive && !this.error,
+  						'text-danger': this.error && this.error.type === 'fatal',
+  					}
+  				},
+  			},
+  		});
+
+  		// ARRAY SYNTAX
+
+  		// <div v-bind:class="[activeClass, errorClass]"></div>
+		// data: {
+		//   activeClass: 'active',
+		//   errorClass: 'text-danger'
+		// }
+
+  		// <div v-bind:class="[isActive ? activeClass : '', errorClass]"></div>
+  		// This will always apply errorClass, but will only apply activeClass when 
+		// isActive is truthy.
+
+		// Combining array and object syntax:
+  		// <div v-bind:class="[{ active: isActive }, errorClass]"></div>
+  		// this does same as above but is much nicer syntax
+
+
+  		/*******************************/
+  		/**** Binding Inline Styles ****/
+  		/*******************************/
+
+  		// OBJECT SYNTAX
+
+  		// <div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"></div>
+  		// data: {
+		//   activeColor: 'red',
+		//   fontSize: 30
+		// }
+
+		// <div v-bind:style="styleObject"></div>
+		// data: {
+		//   styleObject: {
+		//     color: 'red',
+		//     fontSize: '13px'
+		//   }
+		// }
+		// NOTE: can use computed props like with classes as well
+
+		// ARRAY SYNTAX
+
+		// <div v-bind:style="[baseStyles, overridingStyles]"></div>
+
+  	</script>
+</body>
+</html>

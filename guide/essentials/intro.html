@@ -1,0 +1,174 @@
+<!-- Essentials 1 - Introduction -->
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <!-- production version, optimized for size and speed -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+</head>
+<body>
+  <div id="app">
+    {{ message }}
+  </div>
+  <script type="text/javascript">
+    var app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello Vue!'
+      }
+    })
+    // app.message = 'chrem'
+  </script>
+
+  <br>
+
+  <div id="app-2">
+    <span v-bind:title="message">
+      Hover your mouse over me for a few seconds
+      to see my dynamically bound title!
+    </span>
+  </div>
+  <script type="text/javascript">
+    var app2 = new Vue({
+      el: '#app-2',
+      data: {
+        message: 'You loaded this page on ' + new Date().toLocaleString()
+      }
+    })
+    // app2.message = 'some new message'
+  </script>
+
+  <br>
+
+  <div id="app-3">
+    <span v-if="seen">Now you see me</span>
+  </div>
+  <script type="text/javascript">
+    var app3 = new Vue({
+      el: '#app-3',
+      data: {
+        seen: true
+      }
+    })
+    // app3.seen = false
+  </script>
+
+  <br>
+
+  <div id="app-4">
+    <ol>
+      <li v-for="todo in todos">
+        {{ todo.text }}
+      </li>
+    </ol>
+  </div>
+  <script type="text/javascript">
+    var app4 = new Vue({
+      el: '#app-4',
+      data: {
+        todos: [
+          { text: 'Learn JavaScript' },
+          { text: 'Learn Vue' },
+          { text: 'Build something awesome' }
+        ]
+      }
+    })
+    // app4.todos.push({ text: 'New item' }).
+  </script>
+
+  <br>
+
+  <div id="app-5">
+    <p>{{ message }}</p>
+    <button v-on:click="reverseMessage">Reverse Message</button>
+  </div>
+  <script type="text/javascript">
+    var app5 = new Vue({
+      el: '#app-5',
+      data: {
+        message: 'Hello Vue.js!'
+      },
+      methods: {
+        reverseMessage: function () {
+          // I believe `this` refers to the vm instance (app5) - which has all
+          // the `data` properties as its own properties as well.
+          this.message = this.message.split('').reverse().join('')
+        }
+      }
+    })
+  </script>
+
+  <br>
+
+  <div id="app-6">
+    <p>{{ message }}</p>
+    <input v-model="message">
+  </div>
+  <script type="text/javascript">
+    var app6 = new Vue({
+      el: '#app-6',
+      data: {
+        message: 'Hello Vue!'
+      }
+    })
+  </script>
+
+  <br>
+
+  <!-- <div id="app-7"> -->
+    <!-- <ol> -->
+      <!-- Create an instance of the todo-item component -->
+      <!-- <todo-item></todo-item> -->
+    <!-- </ol> -->
+  <!-- </div> -->
+  <div id="app-7">
+    <ol>
+      <!--
+        Now we provide each todo-item with the todo object
+        it's representing, so that its content can be dynamic.
+        We also need to provide each component with a "key",
+        which will be explained later.
+      -->
+      <todo-item
+        v-for="item in groceryList"
+        v-bind:todo="item"
+        v-bind:key="item.id">
+      </todo-item>
+    </ol>
+  </div>
+  <script type="text/javascript">
+    /* app7 */
+    
+    // // Define a new component called todo-item
+    // Vue.component('todo-item', {
+    //   template: '<li>This is a todo</li>'
+    // })
+
+    Vue.component('todo-item', {
+      // The todo-item component now accepts a
+      // "prop", which is like a custom attribute.
+      // This prop is called todo.
+      props: ['todo'],
+      template: '<li>{{ todo.text }}</li>'
+    })
+    var app7 = new Vue({
+      el: '#app-7',
+      data: {
+        groceryList: [
+          { id: 0, text: 'Vegetables' },
+          { id: 1, text: 'Cheese' },
+          { id: 2, text: 'Whatever else humans are supposed to eat' }
+        ]
+      }
+    })
+
+    // app is the parent, component is the child
+
+  </script>
+
+  <br>
+
+  
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Shopping List App</title>
+        <link rel="stylesheet" href="main.css">
+    </head>
+    <body>
+        <div id="shopping-list">
+            <div class="header">
+                <h1>{{ header.toLocaleUpperCase() }}</h1>
+                <button v-if="state === 'default'" class="btn btn-primary" @click="changeState('edit')">Add Item</button>
+                <button v-else class="btn btn-cancel" @click="changeState('default')">Cancel Adding Item</button>
+            </div>
+            <div v-if="state === 'edit'" class="add-item-form">
+                <input v-model="newItem" type="text" placeholder="Add an item" @keyup.enter="saveItem">
+                <button class="btn btn-primary" :disabled="newItem.length === 0" @click="saveItem">Save Item</button>
+            </div>
+            <ul>
+                <li v-for="item in reversedItems" :class="{strikeout: item.purchased, priority: item.highPriority}" @click="togglePurchased(item)">{{ item.label }}</li>
+            </ul>
+            <p v-if="items.length === 0">Nice job! You've bought all your items.</p>
+        </div>
+        <script src="https://unpkg.com/vue"></script>
+        <script>
+
+            var shoppingList = new Vue({
+                el: '#shopping-list',
+                data: {
+                    state: 'default',
+                    header: 'shopping list app',
+                    newItem: '',
+                    items: [
+                        {
+                            label: '10 party hats',
+                            purchased: false,
+                            highPriority: true,
+                        },
+                        {
+                            label: '2 board games',
+                            purchased: true,
+                            highPriority: false,
+                        },
+                        {
+                            label: '20 cups',
+                            purchased: false,
+                            highPriority: false,
+                        },
+                    ]
+                },
+                computed: {
+                    reversedItems() {
+                        return this.items.slice(0).reverse();
+                    }
+                },
+                methods: {
+                    saveItem: function() {
+                        this.items.push({
+                            label: this.newItem,
+                            purchased: false,
+                        });
+                        this.newItem = '';
+                    },
+                    changeState: function(newState) {
+                        this.state = newState;
+                        this.newItem = '';
+                    },
+                    togglePurchased: function(item) {
+                        item.purchased = !item.purchased;
+                    }
+                }
+            })
+
+            // NOTES:
+            // 1) to refer to the Vue instance in the console, use `$vm0` AFTER clicking on the 
+            // Root in the Vue devtools. (Clicking on it injects it into the console)
+
+            // 2) `@` is shorthand for the `v-on` directive (Vue's event listeners)
+            // ex: v-on:click is the same as @click
+
+            // 3) v-if toggles the EXISTENCE of elements in the DOM (not just hide/show)
+            // 4) `:` is shorthand for the `v-bind` directive. Ex: v-bind:disabled is the same // as :disabled
+
+            // 5) the 'strikeout' is a CSS class in main.css
+
+            // 6) array syntax vs object syntax for the class binding attribute:
+            // `:class="{strikeout: item.purchased`
+            // `:class="[item.purchased ? 'strikeout' : '']"`
+            // -- NOTE: the array syntax is not as intuitive, but gives more flexibility
+            // when we want to use a default class
+
+            // 7) !IMPORTANT: It's very important to return a value from our `computed` methods.
+            // This is how we are able to iterate over reversedItems in the template.
+
+            // 8) !IMPORTANT: computed is not meant to change our actual data, rather we use it
+            // for presentation purposes. This is why we use .slice(0) in reversedItems() - 
+            // slice(0) gives us a copy of our items array. Thus we are not actually reversing
+            // the items array, just a copy of it which we display to the user.
+
+            // 9) when we need to actually change data, we use `methods`. When we just want
+            // to change the presentation of the data, we use `computed`.
+        </script>
+    </body>
+</html>
