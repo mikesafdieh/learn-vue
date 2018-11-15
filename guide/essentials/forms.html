@@ -2,7 +2,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<style type="text/css">
+		select {
+			min-width: 50px;
+		}
+	</style>
 </head>
 <body>
   <h1>Essentials 9 - Form Input Bindings</h1>
@@ -13,23 +17,197 @@
 
   <!-- development version, includes helpful console warnings -->
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js" integrity="sha384-pjaaA8dDz/5BgdFUPX6M/9SUZv4d12SUPF0axWc+VRZkx5xU3daN+lYb49+Ax+Tl" crossorigin="anonymous"></script>
 
   <div id="vm1">
-  	
+  	<h4>Text</h4>
+  	<input v-model="message1" placeholder="edit me">
+	<p>Message is: {{ message1 }}</p>
+
+
+	<br>
+	<h4>Multiline text</h4>
+	<span>Multiline message is:</span>
+	<p style="white-space: pre-line;">{{ message2 }}</p>
+	<br>
+	<textarea v-model="message2" placeholder="add multiple lines"></textarea>
+	<!-- 
+		Interpolation on textareas (`<textarea>{{text}}</textarea>`) won't work. Use `v-model` instead.
+	 -->
+
+	<br><br>
+	<h4>Checkbox</h4>
+	<input type="checkbox" id="checkbox" v-model="checked">
+	<label for="checkbox">{{ checked }}</label>
+
+	<br><br>
+	<input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+	<label for="jack">Jack</label>
+	<input type="checkbox" id="john" value="John" v-model="checkedNames">
+	<label for="john">John</label>
+	<input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+	<label for="mike">Mike</label>
+	<br>
+	<span>Checked names: {{ checkedNames }}</span>
+
+
+	<br><br>
+	<h4>Radio</h4>
+	<input type="radio" id="one" value="One" v-model="picked">
+	<label for="one">One</label>
+	<br>
+	<input type="radio" id="two" value="Two" v-model="picked">
+	<label for="two">Two</label>
+	<br>
+	<span>Picked: {{ picked }}</span>
+
+
+	<br><br>
+	<h4>Select</h4>
+	<select v-model="selected">
+	  <option disabled value="">Please select one</option>
+	  <option>A</option>
+	  <option>B</option>
+	  <option>C</option>
+	</select>
+	<span>Selected: {{ selected }}</span>
+	<!-- 
+		NOTE: If the initial value of your v-model expression does not match any of the options, the <select> element will render in an “unselected” state. On iOS this will cause the user not being able to select the first item because iOS does not fire a change event in this case. It is therefore recommended to provide a disabled option with an empty value, as demonstrated in the example above.
+	-->
+
+	<br><br>
+	<select v-model="selectedMulti" multiple>
+	  <option>A</option>
+	  <option>B</option>
+	  <option>C</option>
+	</select>
+	<br>
+	<span>Selected: {{ selectedMulti }}</span>
+	<!-- 
+		IMPORTANT: for some reason in Chrome, you need to set a min-width css property for select multiple elements (as done at the top of this document). Otherwise with options of only one character ling each (like in our case 'A', 'B', 'C'), the selecet element will bug out after selecting one option, and you will only be able to select the rest of the options with shift, arrow, and command keys etc. clicking (and command clicking will not work). This was not an issue in Firefox. Did not test in other browsers.
+	-->
+
+	<br><br>
+	<select v-model="selectedDynamic">
+	  <option v-for="option in options" v-bind:value="option.value">
+	    {{ option.text }}
+	  </option>
+	</select>
+	<span>Selected: {{ selectedDynamic }}</span>
+
+
   </div>
+
 
   <script type="text/javascript">
   	new Vue({
   		el: '#vm1',
   		data: {
-  			message: 'I am a message',
+  			message1: 'I am a message',
+  			message2: 'I am a multiline message',
+  			checked: true,
+  			checkedNames: [],
+  			picked: '', // NOTE: good practice to initialize to a default value
+  			selected: '',
+  			selectedMulti: [],
+  			selectedDynamic: 'A',
+		    options: [
+		      { text: 'One', value: 'A' },
+		      { text: 'Two', value: 'B' },
+		      { text: 'Three', value: 'C' }
+		    ]
   		}
   	});
   </script>
-  <script type="text/javascript"></script>
-  <script type="text/javascript"></script>
-  <script type="text/javascript"></script>
 
+  <div id="value-bindings">
+  	<h4>Value Bindings</h4>
+
+	<!-- `picked` is a string "a" when checked -->
+	<input type="radio" v-model="picked" value="a">
+
+	<!-- `toggle` is either true or false -->
+	<input type="checkbox" v-model="toggle">
+
+	<!-- `selected` is a string "abc" when the first option is selected -->
+	<select v-model="selected">
+	  <option value="abc">ABC</option>
+	</select>
+
+	<br><br>
+	<h4>Dynamic Value Bindings</h4>
+	<input
+	  type="checkbox"
+	  v-model="toggleDynamic"
+	  true-value="yes"
+	  false-value="no"
+	>
+	<!-- 
+		IMPORTANT: The `true-value` and `false-value` attributes don’t affect the input’s `value` attribute, because browsers don’t include unchecked boxes in form submissions. To guarantee that one of two values is submitted in a form (e.g. “yes” or “no”), use radio inputs instead.
+	-->
+
+	<input type="radio" v-model="pickedDynamic" v-bind:value="a">
+
+	<select v-model="selectedDynamic">
+	  <!-- inline object literal -->
+	  <option v-bind:value="{ number: 123 }">123</option>
+	</select>
+
+  </div>
+
+  <script type="text/javascript">
+  	var vm = new Vue({
+  		el: '#value-bindings',
+  		data: {
+  			a: 'hello',
+  			picked: '',
+  			toggle: false,
+  			selected: '',
+  			toggleDynamic: 'no',
+  			pickedDynamic: '',
+  			selectedDynamic: '',
+  		},
+  	});
+
+  	// when checked:
+	vm.toggleDynamic === 'yes'
+	// when unchecked:
+	vm.toggleDynamic === 'no'
+
+  	// when checked:
+	vm.pickedDynamic === vm.a
+
+	// when selected:
+	typeof vm.selectedDynamic // => 'object'
+	vm.selectedDynamic.number // => 123
+  </script>
+
+
+  <div id="modifiers">
+  	<h4>Modifiers</h4>
+
+  	<!-- synced after "change" event instead of "input" event -->
+	<input v-model.lazy="msg"> {{msg}}
+	<br><br>
+
+	<!-- typecast `age` as number -->
+	<input v-model.number="age" type="number"> type: {{typeof age}}
+	<br><br>
+
+	<!-- trim user input -->
+	<input v-model.trim="msgTrim"> '{{msgTrim}}'
+  </div>
+
+  <script type="text/javascript">
+  	var modifiersVM = new Vue({
+  		el: '#modifiers',
+  		data: {
+  			age: 12,
+  			msg: 'hello there',
+  			msgTrim: 'goodbye',
+  		}
+  	});
+  </script>
+
+<br><br><br>
 </body>
 </html>
