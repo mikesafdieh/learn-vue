@@ -1,0 +1,149 @@
+<!-- Essentials 10 - Components Basics -->
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+
+	<div id="components-demo">
+	  <!-- each component's `count` is independent -->
+	  <button-counter></button-counter>
+	  <button-counter></button-counter>
+	  <button-counter></button-counter>
+	</div>
+	
+	<script type="text/javascript">
+		// Define a new component called button-counter
+		Vue.component('button-counter', {
+		  data: function () {
+		    return {
+		      count: 0
+		    }
+		  },
+		  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+		});
+
+		new Vue({ el: '#components-demo' });
+
+		// Globaly register componenets with Vue.component('my-component-name',{...})
+		// They can be used in the template of any Vue instance created afterwards.
+	</script>
+
+	<div id="blog1">
+		<!-- <blog-post title="My journey with Vue"></blog-post> -->
+		<!-- <blog-post title="Blogging with Vue"></blog-post> -->
+		<!-- <blog-post title="Why Vue is so fun"></blog-post> -->
+		<blog-post-1
+		  v-for="post in posts"
+		  v-bind:key="post.id"
+		  v-bind:title="post.title"
+		></blog-post-1>
+	</div>
+
+	<script type="text/javascript">
+		Vue.component('blog-post-1', {
+		  props: ['title'],
+		  template: '<h3>{{ title }}</h3>'
+		})
+		new Vue({
+			el:'#blog1',
+			data: {
+				posts: [
+			      { id: 1, title: 'My journey with Vue' },
+			      { id: 2, title: 'Blogging with Vue' },
+			      { id: 3, title: 'Why Vue is so fun' },
+			    ]
+			},
+		})
+	</script>
+
+	<div id="blog2">
+		<blog-post-2
+		  v-for="post in posts"
+		  v-bind:key="post.id"
+		  v-bind:post="post"
+		></blog-post-2>
+	</div>
+
+	<script type="text/javascript">
+		Vue.component('blog-post-2', {
+		  props: ['post'],
+		  template: `
+		    <div class="blog-post">
+		      <h3>{{ post.title }}</h3>
+		      <div v-html="post.content"></div>
+		    </div>
+		  `
+		})
+		// NOTE: every component needs a single root
+		// NOTE: only using one prop for 'post' as oppossed to a using a prop for each of post's properties (i.e. title, content, comments, publishedAt, etc.)
+
+		new Vue({
+			el:'#blog2',
+			data: {
+				posts: [
+			      { id: 1, title: 'My journey with Vue' },
+			      { id: 2, title: 'Blogging with Vue' },
+			      { id: 3, title: 'Why Vue is so fun' },
+			    ]
+			},
+		})
+	</script>
+
+	<br><br><br>
+	<h3>-----</h3>
+
+	<div id="blog-posts-events-demo">
+	  <div :style="{ fontSize: postFontSize + 'em' }">
+	    <blog-post-3
+	      v-for="post in posts"
+	      v-bind:key="post.id"
+	      v-bind:post="post"
+	      v-on:enlarge-text="postFontSize += $event"
+	    ></blog-post-3>
+	    <!-- NOTE: $event is the 2nd param passed in $emit() in  v-on:click on the button element in the blog-post-3 component -->
+	  </div>
+	</div>
+
+	<script type="text/javascript">
+
+		Vue.component('blog-post-3', {
+		  props: ['post'],
+		  template: `
+		    <div class="blog-post">
+		      <h3>{{ post.title }}</h3>
+		      <button v-on:click="$emit('enlarge-text', 0.1)"> 
+		        Enlarge text
+		      </button>
+		      <div v-html="post.content"></div>
+		    </div>
+		  `
+		})
+
+		new Vue({
+		  el: '#blog-posts-events-demo',
+		  data: {
+		    posts: [
+		    	{ id: 1, title: 'My journey with Vue' },
+		      	{ id: 2, title: 'Blogging with Vue' },
+		      	{ id: 3, title: 'Why Vue is so fun' },
+		    ],
+		    postFontSize: 1, // this 
+		  }
+		})
+
+
+		
+
+	</script>
+
+	<script type="text/javascript"></script>
+
+
+	<br><br><br>
+</body>
+</html>
+
+
