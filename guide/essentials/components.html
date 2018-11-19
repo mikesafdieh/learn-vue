@@ -4,6 +4,12 @@
 <head>
   <!-- development version, includes helpful console warnings -->
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <style type="text/css">
+  	.demo-alert-box {
+  		color: red;
+  	}
+  </style>
 </head>
 <body>
 
@@ -30,6 +36,8 @@
 		// Globaly register componenets with Vue.component('my-component-name',{...})
 		// They can be used in the template of any Vue instance created afterwards.
 	</script>
+
+	<h3>---------------</h3>
 
 	<div id="blog1">
 		<!-- <blog-post title="My journey with Vue"></blog-post> -->
@@ -58,6 +66,8 @@
 			},
 		})
 	</script>
+
+	<h3>---------------</h3>
 
 	<div id="blog2">
 		<blog-post-2
@@ -92,19 +102,35 @@
 		})
 	</script>
 
-	<br><br><br>
-	<h3>-----</h3>
+	<h3>---------------</h3>
 
 	<div id="blog-posts-events-demo">
 	  <div :style="{ fontSize: postFontSize + 'em' }">
-	    <blog-post-3
+	    <!-- <blog-post-3
 	      v-for="post in posts"
 	      v-bind:key="post.id"
 	      v-bind:post="post"
 	      v-on:enlarge-text="postFontSize += $event"
-	    ></blog-post-3>
+	    ></blog-post-3> -->
 	    <!-- NOTE: $event is the 2nd param passed in $emit() in  v-on:click on the button element in the blog-post-3 component -->
+
+	    <!-- Using a method for enlarge-text -->
+	    <blog-post-3
+	      v-for="post in posts"
+	      v-bind:key="post.id"
+	      v-bind:post="post"
+	      v-on:enlarge-text="onEnlargeText(0.1)"
+	    ></blog-post-3>
+	    <!-- Here the amount is the first param -->
 	  </div>
+
+	  <br>
+	  <custom-input v-model="searchText"></custom-input>
+
+	  <br><br>
+	  <alert-box>
+	  	Something bad happened.
+	  </alert-box>
 	</div>
 
 	<script type="text/javascript">
@@ -121,6 +147,42 @@
 		    </div>
 		  `
 		})
+		// NOTE: here we are emitting from the component to the parent (the Vue instance)
+		// postFontSize is in the parent.
+
+		// Normally, `<input v-model="searchText">` is the same as:
+		// `<input
+		//   v-bind:value="searchText"
+		//   v-on:input="searchText = $event.target.value"
+		// >`
+		// But when using v-model on a component we get:
+		// `<custom-input
+		//   v-bind:value="searchText"
+		//   v-on:input="searchText = $event"
+		// ></custom-input>`
+		//
+		// To get it working normally, the `<input>` in the component must:
+		// 1. bind the `value` attr to a `value` prop
+		// 2. On `input` event, emit its own custom `input` event with the new value
+		Vue.component('custom-input', {
+		  props: ['value'],
+		  template: `
+		    <input
+		      v-bind:value="value"
+		      v-on:input="$emit('input', $event.target.value)"
+		    >
+		  `
+		})
+
+		// Use Vue's slot element to pass custom content to each components instance in the HTML:
+		Vue.component('alert-box', {
+		  template: `
+		    <div class="demo-alert-box">
+		      <strong>Error!</strong>
+		      <slot></slot>
+		    </div>
+		  `
+		})
 
 		new Vue({
 		  el: '#blog-posts-events-demo',
@@ -130,17 +192,117 @@
 		      	{ id: 2, title: 'Blogging with Vue' },
 		      	{ id: 3, title: 'Why Vue is so fun' },
 		    ],
-		    postFontSize: 1, // this 
-		  }
+		    postFontSize: 1,
+		    searchText: 'hello',
+		  },
+		  methods: {
+		    onEnlargeText: function (enlargeAmount) {
+		      this.postFontSize += enlargeAmount
+		    },
+		  },
 		})
-
-
-		
 
 	</script>
 
-	<script type="text/javascript"></script>
+	<h3>---------------</h3>
+	<!-- Dynamcic Components -->
+	<!-- 
+		The following is from this JSFiddle:
+		https://jsfiddle.net/chrisvfritz/o3nycadu/
+	-->
+	<style type="text/css">
+		.tab-button {
+		  padding: 6px 10px;
+		  border-top-left-radius: 3px;
+		  border-top-right-radius: 3px;
+		  border: 1px solid #ccc;
+		  cursor: pointer;
+		  background: #f0f0f0;
+		  margin-bottom: -1px;
+		  margin-right: -1px;
+		}
+		.tab-button:hover {
+		  background: #e0e0e0;
+		}
+		.tab-button.active {
+		  background: #e0e0e0;
+		}
+		.tab {
+		  border: 1px solid #ccc;
+		  padding: 10px;
+		}
+	</style>
 
+	<div id="dynamic-component-demo" class="demo">
+	  <button
+	    v-for="tab in tabs"
+	    v-bind:key="tab"
+	    v-bind:class="['tab-button', { active: currentTab === tab }]"
+	    v-on:click="currentTab = tab"
+	  >{{ tab }}</button>
+
+	  <!-- we determine currentTabComponent via a computed method -->
+	  <component
+	    v-bind:is="currentTabComponent"
+	    class="tab"
+	  ></component>
+
+	</div>
+	<span><a href="https://jsfiddle.net/chrisvfritz/o3nycadu/" target="_blank">JSFIddle</a></span>
+
+	<script type="text/javascript">
+		Vue.component('tab-home', { 
+			template: '<div>Home component</div>' 
+		})
+		Vue.component('tab-posts', { 
+			template: '<div>Posts component</div>' 
+		})
+		Vue.component('tab-archive', { 
+			template: '<div>Archive component</div>' 
+		})
+
+		new Vue({
+		  el: '#dynamic-component-demo',
+		  data: {
+		    currentTab: 'Home',
+		    tabs: ['Home', 'Posts', 'Archive']
+		  },
+		  computed: {
+		    currentTabComponent: function () {
+		      return 'tab-' + this.currentTab.toLowerCase()
+		    }
+		  }
+		})
+
+		// NOTE: The <component> element is native to Vue as is it's `is` attribute
+		// In this example, `currentTabComponent` conatains the name of the registered componenet (i.e. either 'tab-home', 'tab-posts', or 'tab-archive')
+		// `currentTabComponent` can also contain a component's options object. For a full working example using this method, see this JSFiddle:
+		// https://jsfiddle.net/chrisvfritz/b2qj69o1/
+
+	</script>
+
+	<!-- DOM Template Parsing Caveats -->
+
+	<!-- 
+		Something like:
+
+		<table>
+		  <blog-post-row></blog-post-row>
+		</table>
+
+		will cause the <blog-post-row> to be hoisted out as invalid content, since the <table> element has restrictions as to what elements are allowed inside it. The workaround is to use Vue's native `is` attribute:
+
+		<table>
+		  <tr is="blog-post-row"></tr>
+		</table>
+
+		There are other cases of HTML elements that have restrictions (see the docs of this lesson for more)
+
+		NOTE: this limitation does not apply if you are using string templates from one of the following sources:
+			1) String templates (e.g. template: '...')
+			2) Single-file (.vue) components
+			3) <script type="text/x-template">
+	-->
 
 	<br><br><br>
 </body>
