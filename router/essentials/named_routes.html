@@ -1,8 +1,5 @@
 <!-- 5. Named Routes -->
 
-<!-- JSFiddle: https://jsfiddle.net/posva/6du90epg/ -->
-<!-- Use link above if having trouble in browser because of ERR_FILE_NOT_FOUND -->
-
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
 
@@ -15,7 +12,7 @@
 	const Bar = { template: '<div>This is Bar {{ $route.params.id }}</div>' }
 
 	const router = new VueRouter({
-	  // mode: 'history',
+	  mode: 'history',
 	  // base: __dirname,
 	  routes: [
 	    { path: '/', name: 'home', component: Home },
@@ -24,7 +21,7 @@
 	  ]
 	})
 
-	new Vue({
+	const app = new Vue({
 	  router,
 	  template: `
 	    <div id="app">

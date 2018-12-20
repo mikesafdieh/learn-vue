@@ -1,6 +1,6 @@
 <!-- 6a. Named Views -->
 
-<!-- JSFiddle: https://jsfiddle.net/posva/22wgksa3/ -->
+<!-- JSFiddle: https://jsfiddle.net/posva/6du90epg/ -->
 <!-- Use link above if having trouble in browser because of ERR_FILE_NOT_FOUND -->
 
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
@@ -16,6 +16,7 @@
       <router-link to="/other">/other</router-link>
     </li>
   </ul>
+  <!-- <router-view></router-view> -->
   <router-view class="view one"></router-view>
   <router-view class="view two" name="a"></router-view>
   <router-view class="view three" name="b"></router-view>
@@ -27,7 +28,8 @@
 	const Baz = { template: '<div>baz</div>' }
 
 	const router = new VueRouter({
-	  mode: 'history',
+	  // NOTE: for some reason, the line below messes up the links!
+	  // mode: 'history',
 	  routes: [
 	    { path: '/',
 	      // a single route can define multiple named components
@@ -50,8 +52,13 @@
 	})
 
 	new Vue({
-		router,
+	  router,
 	  el: '#app'
 	})
+
+	// const app = new Vue({
+	//   router,
+	//   el: '#app'
+	// }).$mount('#app')
 
 </script>
